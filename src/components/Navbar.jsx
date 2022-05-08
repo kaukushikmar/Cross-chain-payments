@@ -34,7 +34,7 @@ const Navbar = () => {
     <nav className="w-full flex md:justify-center justify-between items-center p-4">
       <div className="md:flex-[0.5] flex-initial justify-center items-center">
         <img src={logo1} alt="logo" className="w-10 cursor-pointer" />
-        <h1 className="text-white text-base font-bold">HOP</h1>
+        <h1 className="text-white text-base font-bold">Sentinals</h1>
       </div>
       <div className="text-white md:flex hidden list-none flex-row justify-between items-center flex-initial">
         {/* {["Market", "Exchange", "Tutorials", "Wallets"].map((item, index) => (
