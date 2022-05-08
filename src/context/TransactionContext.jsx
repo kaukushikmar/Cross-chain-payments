@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
-
 import {
   contractABI,
   contractAddress,
@@ -8,6 +7,11 @@ import {
   bridgeABI,
   ercABI,
 } from "../utils/constants";
+import {
+  AxelarGateway,
+  Environment,
+  EvmChain,
+} from "@axelar-network/axelarjs-sdk";
 
 export const TransactionContext = React.createContext();
 
@@ -229,7 +233,7 @@ export const TransactionsProvider = ({ children }) => {
     }
   };
 
-  const BridgeNFT = async () => {
+  const Bridge = async () => {
     try {
       if (!ethereum) return alert("Please install MetaMask.");
 
@@ -252,6 +256,66 @@ export const TransactionsProvider = ({ children }) => {
           },
         ],
       });
+
+    //   const contract = new ethers.Contract(address, erc, provider);
+    //   const allowance = await contract.allowance(
+    //     evmWallet.address,
+    //     AXELAR_GATEWAY_CONTRACT
+    //   );
+
+    //   const approvalRequired = allowance.isZero();
+
+    //   if (approvalRequired) {
+    //     console.log("\n==== Approving UST... ====");
+    //     const receipt = await gateway
+    //       .createApproveTx({ tokenAddress: UST_ADDRESS_AVALANCHE })
+    //       .then((tx) => tx.send(evmWallet))
+    //       .then((tx) => tx.wait());
+    //     console.log(
+    //       "UST has been approved to gateway contract",
+    //       receipt.transactionHash
+    //     );
+    //   }
+    } catch (error) {
+      console.log(error);
+
+      throw new Error("No ethereum object");
+    }
+  };
+
+  const approve = async () => {
+    try {
+      if (!ethereum) return alert("Please install MetaMask.");
+      const accounts = await ethereum.request({ method: "eth_accounts" });
+
+      const UST_ADDRESS_AVALANCHE = "0x96640d770bf4a15Fb8ff7ae193F3616425B15FFE";
+      const AXELAR_GATEWAY_CONTRACT = "0x4ffb57aea2295d663b03810a5802ef2bc322370d";
+
+      const gateway = AxelarGateway.create(
+        Environment.DEVNET,
+        EvmChain.AVALANCHE,
+        provider
+      );
+
+      const contract = new ethers.Contract(address, erc, provider);
+      const allowance = await contract.allowance(
+        accounts[0],
+        AXELAR_GATEWAY_CONTRACT
+      );
+
+      const approvalRequired = allowance.isZero();
+
+      if (approvalRequired) {
+        console.log("\n==== Approving UST... ====");
+        const receipt = await gateway
+          .createApproveTx({ tokenAddress: UST_ADDRESS_AVALANCHE })
+          .then((tx) => tx.send(ethereum))
+          .then((tx) => tx.wait());
+        console.log(
+          "UST has been approved to gateway contract",
+          receipt.transactionHash
+        );
+      }
     } catch (error) {
       console.log(error);
 
@@ -275,8 +339,8 @@ export const TransactionsProvider = ({ children }) => {
         sendTransaction,
         handleChange,
         formData,
-        lockNFT,
-        BridgeNFT,
+        approve,
+        Bridge,
       }}
     >
       {children}
