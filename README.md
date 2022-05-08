@@ -1,4 +1,4 @@
-# MIT Hackathon frontend
+# CROSS-CHAIN PAYMENTS 
 
 ### Inspiration
 Blockchain is still lacking mass adoption. It is not easy for merchants to accept payments in crypto which is volatile. Also, because of fragmented liquidity on several chains like Bitcoin, Ethereum, Avalanche, polygon, Solana, etc., it becomes even harder to manage payments as sometimes the user has funds on one network and the merchant only supports payments in another network. This creates a disconnect because of which it is not really easy for payments to take place.
@@ -20,3 +20,4 @@ support all network and all tokens along with auto conversion.
 
 ![Screenshot from 2022-05-08 09-20-26](https://user-images.githubusercontent.com/76250660/167281368-198986b4-07aa-4f4b-ac43-2d55d9dd1ee1.png)
 ![Screenshot from 2022-05-08 09-21-28](https://user-images.githubusercontent.com/76250660/167281386-8c1a69f0-a639-449f-af30-abeaee1252dd.png)
+
