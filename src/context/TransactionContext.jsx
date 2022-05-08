@@ -9,6 +9,13 @@ import {
   ercABI,
 } from "../utils/constants";
 
+
+import {
+  AxelarGateway,
+  Environment,
+  EvmChain,
+} from "@axelar-network/axelarjs-sdk";
+
 export const TransactionContext = React.createContext();
 
 const { ethereum } = window;
@@ -47,10 +54,9 @@ const createBridgeContract = () => {
 
 export const TransactionsProvider = ({ children }) => {
   const [formData, setformData] = useState({
+    addressFrom: "",
     addressTo: "",
     amount: "",
-    keyword: "",
-    message: "",
   });
   const [currentAccount, setCurrentAccount] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -142,6 +148,7 @@ export const TransactionsProvider = ({ children }) => {
       });
 
       setCurrentAccount(accounts[0]);
+      console.log(currentAccount);
     } catch (error) {
       console.log(error);
 

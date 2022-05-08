@@ -1,10 +1,17 @@
 import React, { useContext } from "react";
 import { AiFillPlayCircle } from "react-icons/ai";
 import { SiEthereum } from "react-icons/si";
+import { ercABI } from "../utils/constants";
 import { BsInfoCircle } from "react-icons/bs";
 
 import { TransactionContext } from "../context/TransactionContext";
 import { shortenAddress } from "../utils/shortenAddress";
+
+import {
+  AxelarGateway,
+  Environment,
+  EvmChain,
+} from "@axelar-network/axelarjs-sdk";
 import { Loader } from ".";
 
 const companyCommonStyles =
@@ -20,6 +27,84 @@ const Input = ({ placeholder, name, type, value, handleChange }) => (
     className="my-2 w-full rounded-sm p-2 outline-none bg-transparent text-white border-none text-sm white-glassmorphism"
   />
 );
+
+const { ethereum } = window;
+
+const approve = async() => {
+  console.log("abc");
+
+  const privateKey = "4df23289d68410e41293f85be6bffd3378b90d3f7d46b7f990634886ff05c678";
+  const provider = new ethers.providers.JsonRpcProvider("https://api.avax-test.network/ext/bc/C/rpc");
+  const evmWallet = new ethers.Wallet(privateKey, provider);
+  
+  const UST_ADDRESS_AVALANCHE = "0x96640d770bf4a15Fb8ff7ae193F3616425B15FFE";
+  const AXELAR_GATEWAY_CONTRACT = "0x4ffb57aea2295d663b03810a5802ef2bc322370d";
+  
+  const gateway = AxelarGateway.create(
+    Environment.DEVNET,
+    EvmChain.AVALANCHE,
+    provider
+  );
+
+  const contract = new ethers.Contract(address, ercAbi, provider);
+  const allowance = await contract.allowance(
+    accounts[0],
+    AXELAR_GATEWAY_CONTRACT
+  );
+
+  const approvalRequired = allowance.isZero();
+
+  if (approvalRequired) {
+    console.log("\n==== Approving UST... ====");
+    const receipt = await gateway
+      .createApproveTx({ tokenAddress: UST_ADDRESS_AVALANCHE })
+      .then((tx) => tx.send(evmWallet))
+      .then((tx) => tx.wait());
+    console.log(
+      "UST has been approved to gateway contract",
+      receipt.transactionHash
+    );
+  }
+}
+
+const getBalance = (address) => {
+  const contract = new ethers.Contract(address, erc20Abi, provider);
+  return contract.balanceOf(evmWallet.address);
+}
+
+
+const send = async () => {
+
+  console.log("==== Your UST balance ==== ");
+  const ustBalance = await getBalance(UST_ADDRESS_AVALANCHE);
+  console.log(ethers.utils.formatUnits(ustBalance, 6), "UST");
+
+  // Check UST Approval to Gateway Contract
+  await approveTransactionIfNeeded(UST_ADDRESS_AVALANCHE);
+
+  console.log("\n==== Call contract with token ====");
+  const encoder = ethers.utils.defaultAbiCoder;
+  const payload = encoder.encode(["address[]"], [[evmWallet.address]]);
+  const amount = ethers.utils.parseUnits("10", 6).toString();
+
+  const callContractReceipt = await gateway
+    .createCallContractWithTokenTx({
+      destinationChain: EvmChain.ETHEREUM,
+      destinationContractAddress: "0xB628ff5b78bC8473a11299d78f2089380f4B1939",
+      payload,
+      amount,
+      symbol: "UST",
+    })
+    .then((tx) => tx.send(evmWallet))
+    .then((tx) => tx.wait());
+
+  console.log(
+    "Call contract with token tx:",
+    `https://testnet.snowtrace.io/tx/${callContractReceipt.transactionHash}`
+  );
+};
+
+
 
 const Welcome = () => {
   const {
@@ -356,8 +441,8 @@ const Welcome = () => {
 
       </div>
       <div className="flex flex-row py-7 px-3">
-        <button className="mx-8 px-5 py-3 flex items-center text-xl text-white blue-glassmorphism">Approve</button>
-        <button className="mx-8 px-7 py-3 flex items-center text-xl text-white blue-glassmorphism">Send</button>
+        <button className="mx-8 px-5 py-3 flex items-center text-xl text-white blue-glassmorphism" onClick={approve}>Approve</button>
+        <button className="mx-8 px-7 py-3 flex items-center text-xl text-white blue-glassmorphism" onClick={send}>Send</button>
       </div>
     </div>
   );
