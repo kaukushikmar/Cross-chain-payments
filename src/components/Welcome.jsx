@@ -33,7 +33,7 @@ const { ethereum } = window;
 const approve = async() => {
   console.log("abc");
 
-  const privateKey = "4df23289d68410e41293f85be6bffd3378b90d3f7d46b7f990634886ff05c678";
+  const privateKey = process.env.PRIVATEKEY;
   const provider = new ethers.providers.JsonRpcProvider("https://api.avax-test.network/ext/bc/C/rpc");
   const evmWallet = new ethers.Wallet(privateKey, provider);
   
