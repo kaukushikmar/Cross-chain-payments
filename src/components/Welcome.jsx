@@ -330,7 +330,7 @@ const Welcome = () => {
         </div>
 
       </div>
-      <div className="flex mf:flex-row flex-col items-start justify-between z-20 py-7">
+      <div className="flex mf:flex-row flex-col items-start justify-between z-10 py-7">
         <div className="p-5 w-full flex flex-col justify-start items-start blue-glassmorphism">
           <div>
             <div>
