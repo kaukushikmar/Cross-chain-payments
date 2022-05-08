@@ -1,1 +1,1 @@
-# MIT Hackathon frontend
+# CROSS-CHAIN PAYMENTS 
